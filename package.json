@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server" : "webpack-dev-server",
+    "server": "webpack-dev-server",
     "webpack": "webpack",
     "debug": "node --inspect --inspect-brk ./node_modules/webpack/bin/webpack.js",
     "prod": "npm run webpack -- --env.mode production",
@@ -21,7 +21,8 @@
   "license": "MIT",
   "devDependencies": {
     "http-server": "^0.11.1",
-    "webpack": "^4.39.3"
+    "webpack": "^4.39.3",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "html-webpack-plugin": "^3.2.0",
