@@ -8,8 +8,9 @@
     "webpack": "webpack",
     "debug": "node --inspect --inspect-brk ./node_modules/webpack/bin/webpack.js",
     "prod": "npm run webpack -- --env.mode production",
-    "dev": "npm run server -- --env.mode development",
+    "dev": "npm run server -- --env.mode development --hot",
     "prod:debug": "npm run debug -- --env.mode production",
+    "prod:typescript" : "npm run webpack -- --env.presets typescript",
     "dev:debug": "npm run debug -- --env.mode development"
   },
   "repository": {
@@ -20,7 +21,10 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "file-loader": "^4.2.0",
     "http-server": "^0.11.1",
+    "mini-css-extract-plugin": "^0.8.0",
+    "url-loader": "^2.1.0",
     "webpack": "^4.39.3",
     "webpack-merge": "^4.2.2"
   },
