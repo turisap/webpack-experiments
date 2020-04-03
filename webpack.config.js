@@ -1,39 +1,45 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
-const modeConfig = mode => require(`./build-utils/webpack.${mode}`)(mode);
-const webpackMerge = require('webpack-merge');
-const presetConfig = require('./build-utils/loadPresets');
+const path = require("path");
+var DashboardPlugin = require("webpack-dashboard/plugin");
 
-module.exports = ({ mode, presets } = { mode : 'production', presets : []})  => {
-    // console.log("MODE", mode);
-    // console.log("PRESETS",presets)
+const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
-    return webpackMerge(
-        {
-            //mode : "none | development | production"
-            mode,
-            entry : './src/index.js',
-            output : {
-                filename : 'bundle.js',
+const ROUTES = {
+  appEntry: resolveModule("src/index.js"),
+  appBuilt: resolveModule("build"),
+  appPublic: resolveModule("public"),
+};
 
-            },
-            module : {
-              rules : [
-                  {
-                      test: /\.jpe?g$/,
-                      use : [{
-                          loader : 'url-loader',
-                          options : {
-                              limit : 5000
-                          }
-                      }]
-                  }
-              ]
-            },
-            plugins : [ new HtmlWebpackPlugin(), new webpack.ProgressPlugin(),]
+module.exports = function (mode) {
+  const DEV_MODE = mode === "development";
+  const PROD_MODE = mode === "production";
+  console.log(arguments);
 
-        },
-        modeConfig(mode),
-        presets ? presetConfig({ mode, presets}) : null,
-    );
-}
+  return {
+    mode: PROD_MODE ? "production" : DEV_MODE && "development",
+
+    bail: PROD_MODE,
+
+    // TODO add cache param after whole configuration
+    devtool: PROD_MODE ? "source-map" : DEV_MODE && "eval-source-map",
+
+    entry: ROUTES.appEntry,
+
+    output: {
+      path: PROD_MODE ? ROUTES.appBuilt : undefined,
+
+      filename: PROD_MODE
+        ? "static/js/[name].[contenthash].js"
+        : "static/js/bundle.js",
+
+      chunkFilename: PROD_MODE
+        ? "static/js/[name].[contenthash].chunk.js"
+        : "static/js/[name].chunk.js",
+
+      publicPath: ROUTES.appPublic,
+
+      globalObject: "this",
+    },
+
+    plugins: [new DashboardPlugin()],
+  };
+};
