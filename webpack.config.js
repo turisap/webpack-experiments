@@ -1,5 +1,8 @@
 const path = require("path");
-var DashboardPlugin = require("webpack-dashboard/plugin");
+const DashboardPlugin = require("webpack-dashboard/plugin");
+const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
@@ -9,13 +12,27 @@ const ROUTES = {
   appPublic: resolveModule("public"),
 };
 
-module.exports = function (mode) {
+const cssRegex = /\.css$/;
+const sassRegex = /\.(scss|sass)$/;
+
+module.exports = function ({ mode }) {
   const DEV_MODE = mode === "development";
   const PROD_MODE = mode === "production";
-  console.log(arguments);
+
+  const getStyleLoaders = () => {
+    const loaders = [
+      DEV_MODE && require.resolve("style-loader"),
+      PROD_MODE && {
+        loader: MiniCssExtractPlugin.loader,
+      },
+      { loader: require.resolve("css-loader") },
+    ].filter(Boolean);
+
+    return loaders;
+  };
 
   return {
-    mode: PROD_MODE ? "production" : DEV_MODE && "development",
+    mode,
 
     bail: PROD_MODE,
 
@@ -27,19 +44,58 @@ module.exports = function (mode) {
     output: {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
 
-      filename: PROD_MODE
-        ? "static/js/[name].[contenthash].js"
-        : "static/js/bundle.js",
+      filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
 
-      chunkFilename: PROD_MODE
-        ? "static/js/[name].[contenthash].chunk.js"
-        : "static/js/[name].chunk.js",
+      // chunkFilename: PROD_MODE
+      //   ? "js/[name].[contenthash].chunk.js"
+      //   : "js/[name].chunk.js",
 
       publicPath: ROUTES.appPublic,
 
+      // for web workers
       globalObject: "this",
     },
 
-    plugins: [new DashboardPlugin()],
+    optimization: {
+      minimize: PROD_MODE,
+      minimizer: [
+        new TerserPlugin({
+          terserOptions: {
+            parse: {
+              ecma: 8,
+            },
+            output: {
+              comments: true,
+            },
+          },
+
+          parallel: true,
+
+          sourceMap: true,
+        }),
+        new OptimizeCssAssetsPlugin({}),
+      ],
+    },
+
+    plugins: [
+      new DashboardPlugin(),
+
+      PROD_MODE &&
+        new MiniCssExtractPlugin({
+          filename: "css/[name].[contenthash:8].css",
+          // chunkFilename: "css/[name].[contenthash:8].chunk.css",
+        }),
+    ].filter(Boolean),
+
+    module: {
+      strictExportPresence: true,
+
+      rules: [
+        {
+          test: cssRegex,
+          use: getStyleLoaders(),
+        },
+      ],
+    },
   };
 };

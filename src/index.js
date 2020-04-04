@@ -5,12 +5,12 @@
 // import { makeColorStyle } from "./button-styles";
 // import { footer } from "./footer";
 // import makeImg from "./image";
-// import './styles/footer.css';
-// import './styles/button.css';
+ import './styles/footer.css';
+ import './styles/button.css';
 
 // const image = makeImg(logo);
 // const button = makeButton('Yay a button!!!!');
 
-const fn = () => {
+const fn = (bigarg1, unusedone) => {
   console.log("yay!!!");
 };
