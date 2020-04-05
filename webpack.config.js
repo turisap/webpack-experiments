@@ -25,7 +25,24 @@ module.exports = function ({ mode }) {
       PROD_MODE && {
         loader: MiniCssExtractPlugin.loader,
       },
+
       { loader: require.resolve("css-loader") },
+      {
+        loader: "postcss-loader",
+        options: {
+          ident: "postcss_opt",
+          plugins: () => [
+            require("postcss-flexbugs-fixes"),
+            require("postcss-preset-env")({
+              stage: 3,
+              autoprefixer: {
+                flex: true,
+              },
+            }),
+            require("cssnano")(),
+          ],
+        },
+      },
     ].filter(Boolean);
 
     return loaders;
@@ -73,7 +90,6 @@ module.exports = function ({ mode }) {
 
           sourceMap: true,
         }),
-        new OptimizeCssAssetsPlugin({}),
       ],
     },
 
@@ -84,6 +100,15 @@ module.exports = function ({ mode }) {
         new MiniCssExtractPlugin({
           filename: "css/[name].[contenthash:8].css",
           // chunkFilename: "css/[name].[contenthash:8].chunk.css",
+        }),
+
+      // TODO find out why this plugin removes source maps for prod
+      PROD_MODE &&
+        new OptimizeCssAssetsPlugin({
+          cssProcessor: require("cssnano"),
+          cssProcessorPluginOptions: {
+            preset: ["default", { discardComments: { removeAll: true } }],
+          },
         }),
     ].filter(Boolean),
 
