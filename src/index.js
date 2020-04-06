@@ -1,16 +1,11 @@
-// import nav from "./nav";
-// import { top, bottom } from "./footer";
-// import logo from '../assets/webpack.jpg'
-// import makeButton from "./button";
-// import { makeColorStyle } from "./button-styles";
-// import { footer } from "./footer";
-// import makeImg from "./image";
- import './styles/footer.css';
- import './styles/button.css';
-
-// const image = makeImg(logo);
-// const button = makeButton('Yay a button!!!!');
+import "./index.scss";
 
 const fn = (bigarg1, unusedone) => {
   console.log("yay!!!");
+
+  const div = document.createElement("div");
+  div.classList.add("icon");
+  document.body.append(div);
 };
+
+fn();

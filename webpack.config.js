@@ -3,6 +3,7 @@ const DashboardPlugin = require("webpack-dashboard/plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
@@ -14,19 +15,22 @@ const ROUTES = {
 
 const cssRegex = /\.css$/;
 const sassRegex = /\.(scss|sass)$/;
+const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 
 module.exports = function ({ mode }) {
   const DEV_MODE = mode === "development";
   const PROD_MODE = mode === "production";
 
-  const getStyleLoaders = () => {
+  const getStyleLoaders = (preProcessor, sourceMap = true) => {
     const loaders = [
-      DEV_MODE && require.resolve("style-loader"),
-      PROD_MODE && {
+      {
         loader: MiniCssExtractPlugin.loader,
       },
 
-      { loader: require.resolve("css-loader") },
+      {
+        loader: require.resolve("css-loader"),
+      },
+
       {
         loader: "postcss-loader",
         options: {
@@ -39,11 +43,30 @@ module.exports = function ({ mode }) {
                 flex: true,
               },
             }),
-            require("cssnano")(),
           ],
+          sourceMap,
         },
       },
     ].filter(Boolean);
+
+    if (preProcessor) {
+      loaders.push(
+        // this loader is required by sass loader to resolve urls
+        {
+          loader: require.resolve("resolve-url-loader"),
+          options: {
+            sourceMap,
+          },
+        },
+        // TODO check if urls resolves well with background f.e.
+        {
+          loader: require.resolve(preProcessor),
+          options: {
+            sourceMap,
+          },
+        }
+      );
+    }
 
     return loaders;
   };
@@ -67,7 +90,7 @@ module.exports = function ({ mode }) {
       //   ? "js/[name].[contenthash].chunk.js"
       //   : "js/[name].chunk.js",
 
-      publicPath: ROUTES.appPublic,
+      // publicPath: ROUTES.appPublic,
 
       // for web workers
       globalObject: "this",
@@ -90,26 +113,54 @@ module.exports = function ({ mode }) {
 
           sourceMap: true,
         }),
-      ],
-    },
 
-    plugins: [
-      new DashboardPlugin(),
-
-      PROD_MODE &&
-        new MiniCssExtractPlugin({
-          filename: "css/[name].[contenthash:8].css",
-          // chunkFilename: "css/[name].[contenthash:8].chunk.css",
-        }),
-
-      // TODO find out why this plugin removes source maps for prod
-      PROD_MODE &&
+        // TODO find out why this plugin removes source maps for prod
         new OptimizeCssAssetsPlugin({
           cssProcessor: require("cssnano"),
           cssProcessorPluginOptions: {
             preset: ["default", { discardComments: { removeAll: true } }],
           },
         }),
+      ],
+    },
+
+    plugins: [
+      new DashboardPlugin(),
+
+      new MiniCssExtractPlugin({
+        filename: PROD_MODE
+          ? "css/[name].[contenthash:8].css"
+          : DEV_MODE && "css/main.css",
+        // chunkFilename: "css/[name].[contenthash:8].chunk.css",
+      }),
+
+      new HtmlWebpackPlugin(
+        Object.assign(
+          {},
+          {
+            // defer script loading
+            scriptLoading: "defer",
+
+            // TODO add a favicon
+            favicon: "",
+            title: "My app",
+          },
+          PROD_MODE && {
+            minify: {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeRedundantAttributes: true,
+              useShortDoctype: true,
+              removeEmptyAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              keepClosingSlash: true,
+              minifyJS: true,
+              minifyCSS: true,
+              minifyURLs: true,
+            },
+          }
+        )
+      ),
     ].filter(Boolean),
 
     module: {
@@ -119,6 +170,14 @@ module.exports = function ({ mode }) {
         {
           test: cssRegex,
           use: getStyleLoaders(),
+        },
+        {
+          test: sassRegex,
+          use: getStyleLoaders("sass-loader"),
+        },
+        {
+          test: imagesRegex,
+          use: "file-loader",
         },
       ],
     },
