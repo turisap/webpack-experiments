@@ -4,14 +4,13 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
 // TODO try several entry points
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
+// TODO  add webpack bundle analize preset
 const ROUTES = {
   appEntry: resolveModule("src/index.js"),
   appBuilt: resolveModule("build"),
@@ -31,10 +30,8 @@ module.exports = function ({ mode }) {
       {
         loader: MiniCssExtractPlugin.loader,
 
-        // TODO test it
         options: {
-          // only enable hot in development
-          hmr: true,
+          hmr: DEV_MODE,
           reloadAll: true,
         },
       },
@@ -137,8 +134,6 @@ module.exports = function ({ mode }) {
 
     plugins: [
       new DashboardPlugin(),
-
-      new BundleAnalyzerPlugin(),
 
       new MiniCssExtractPlugin({
         filename: PROD_MODE
