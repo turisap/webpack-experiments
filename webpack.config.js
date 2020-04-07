@@ -7,6 +7,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
+// TODO try several entry points
 const ROUTES = {
   appEntry: resolveModule("src/index.js"),
   appBuilt: resolveModule("build"),
@@ -25,10 +26,20 @@ module.exports = function ({ mode }) {
     const loaders = [
       {
         loader: MiniCssExtractPlugin.loader,
+
+        // TODO test it
+        options: {
+          // only enable hot in development
+          hmr: true,
+          reloadAll: true,
+        },
       },
 
       {
         loader: require.resolve("css-loader"),
+        options: {
+          sourceMap,
+        },
       },
 
       {
@@ -58,7 +69,6 @@ module.exports = function ({ mode }) {
             sourceMap,
           },
         },
-        // TODO check if urls resolves well with background f.e.
         {
           loader: require.resolve(preProcessor),
           options: {
@@ -74,10 +84,11 @@ module.exports = function ({ mode }) {
   return {
     mode,
 
+    //  exit building proccess on error
     bail: PROD_MODE,
 
     // TODO add cache param after whole configuration
-    devtool: PROD_MODE ? "source-map" : DEV_MODE && "eval-source-map",
+    devtool: PROD_MODE ? "source-map" : "cheap-module-source-map",
 
     entry: ROUTES.appEntry,
 
@@ -85,10 +96,6 @@ module.exports = function ({ mode }) {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
 
       filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
-
-      // chunkFilename: PROD_MODE
-      //   ? "js/[name].[contenthash].chunk.js"
-      //   : "js/[name].chunk.js",
 
       // publicPath: ROUTES.appPublic,
 
@@ -131,7 +138,6 @@ module.exports = function ({ mode }) {
         filename: PROD_MODE
           ? "css/[name].[contenthash:8].css"
           : DEV_MODE && "css/main.css",
-        // chunkFilename: "css/[name].[contenthash:8].chunk.css",
       }),
 
       new HtmlWebpackPlugin(

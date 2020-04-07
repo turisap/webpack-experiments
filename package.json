@@ -14,6 +14,10 @@
     "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-flexbugs-fixes": "^4.2.0",
+    "autoprefixer": "^9.7.5",
+    "cssnano": "^4.1.10",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.7.0",
     "react-dev-utils": "^10.2.1",
     "resolve-url-loader": "^3.1.1",
     "sass-loader": "^8.0.2",
@@ -26,13 +30,9 @@
   },
   "scripts": {
     "dev": "webpack-dashboard -- webpack-dev-server --env.mode development",
-    "dev:debug": "webpack-dev-server --env.mode development",
+    "dev:debug": "webpack-dev-server --env.mode development  --hot",
     "prod": "webpack  --env.mode production"
   },
   "dependencies": {
-    "autoprefixer": "^9.7.5",
-    "cssnano": "^4.1.10",
-    "postcss-loader": "^3.0.0",
-    "postcss-preset-env": "^6.7.0"
   }
 }
