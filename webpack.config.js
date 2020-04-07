@@ -4,10 +4,14 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
 // TODO try several entry points
+// TODO  and make it  with several  css files outputs as well
+// TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
 const ROUTES = {
   appEntry: resolveModule("src/index.js"),
   appBuilt: resolveModule("build"),
@@ -134,6 +138,8 @@ module.exports = function ({ mode }) {
     plugins: [
       new DashboardPlugin(),
 
+      new BundleAnalyzerPlugin(),
+
       new MiniCssExtractPlugin({
         filename: PROD_MODE
           ? "css/[name].[contenthash:8].css"
@@ -153,6 +159,7 @@ module.exports = function ({ mode }) {
           },
           PROD_MODE && {
             minify: {
+              // TODO check if it removes comments from html
               removeComments: true,
               collapseWhitespace: true,
               removeRedundantAttributes: true,
@@ -160,6 +167,8 @@ module.exports = function ({ mode }) {
               removeEmptyAttributes: true,
               removeStyleLinkTypeAttributes: true,
               keepClosingSlash: true,
+
+              // everything which comes in as  <style> or <script> ...code </script>
               minifyJS: true,
               minifyCSS: true,
               minifyURLs: true,
