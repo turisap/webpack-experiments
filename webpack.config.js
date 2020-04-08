@@ -11,6 +11,7 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
 // TODO  add webpack bundle analize preset
+// TODO image compression
 const ROUTES = {
   appEntry: resolveModule("src/index.js"),
   appBuilt: resolveModule("build"),
@@ -187,7 +188,12 @@ module.exports = function ({ mode }) {
         },
         {
           test: imagesRegex,
-          use: "file-loader",
+          loader: "file-loader",
+          options: {
+            // outputPath: "images",
+            // name: `[${PROD_MODE ? "hash" : "path"}][name].[ext]`,
+            name: `/images/[hash][name].[ext]`,
+          },
         },
       ],
     },
