@@ -16,7 +16,7 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO read about sass modules and setup loaders for them
 // TODO reporting on files exceeding particular size
 const ROUTES = {
-  appEntry: resolveModule("src/index.js"),
+  appEntry: resolveModule("src/index.ts"),
   appBuilt: resolveModule("build"),
   appPublic: resolveModule("public"),
 };
@@ -25,6 +25,7 @@ const cssRegex = /\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
+const tsRegex = /\.tsx?$/;
 
 module.exports = function ({ mode }) {
   const DEV_MODE = mode === "development";
@@ -188,10 +189,13 @@ module.exports = function ({ mode }) {
           exclude: /node_modules/,
           loader: "eslint-loader",
           options: {
-            // cache: true,
-            // makes  terminal logs pretty and more readable
             // formatter: require("eslint-friendly-formatter"),
           },
+        },
+        {
+          test: tsRegex,
+          use: "ts-loader",
+          exclude: /node_modules/,
         },
         {
           test: cssRegex,

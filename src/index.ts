@@ -1,6 +1,6 @@
 import "./index.scss";
 
-const fn = () => {
+const fn = (): number => {
   console.log("yay!!!");
   const n = 8;
 
@@ -10,7 +10,7 @@ const fn = () => {
   div.classList.add("icon");
   document.body.append(div);
 
-  return null;
+  return 4;
 };
 
 fn();
