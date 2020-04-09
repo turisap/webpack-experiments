@@ -11,7 +11,10 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
 // TODO  add webpack bundle analize preset
-// TODO image compression
+// TODO images compressiong with webpack
+// TODO code splitting
+// TODO read about sass modules and setup loaders for them
+// TODO reporting on files exceeding particular size
 const ROUTES = {
   appEntry: resolveModule("src/index.js"),
   appBuilt: resolveModule("build"),
@@ -21,6 +24,7 @@ const ROUTES = {
 const cssRegex = /\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
+const scriptsRegex = /\.(js|ts|tsx)$/;
 
 module.exports = function ({ mode }) {
   const DEV_MODE = mode === "development";
@@ -179,6 +183,17 @@ module.exports = function ({ mode }) {
 
       rules: [
         {
+          test: scriptsRegex,
+          enforce: "pre",
+          exclude: /node_modules/,
+          loader: "eslint-loader",
+          options: {
+            // cache: true,
+            // makes  terminal logs pretty and more readable
+            // formatter: require("eslint-friendly-formatter"),
+          },
+        },
+        {
           test: cssRegex,
           use: getStyleLoaders(),
         },
@@ -188,12 +203,14 @@ module.exports = function ({ mode }) {
         },
         {
           test: imagesRegex,
-          loader: "file-loader",
-          options: {
-            // outputPath: "images",
-            // name: `[${PROD_MODE ? "hash" : "path"}][name].[ext]`,
-            name: `/images/[hash][name].[ext]`,
-          },
+          use: [
+            {
+              loader: "url-loader",
+              options: {
+                limit: 8192,
+              },
+            },
+          ],
         },
       ],
     },
