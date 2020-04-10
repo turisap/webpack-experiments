@@ -2,9 +2,8 @@ import "./index.scss";
 
 const fn = (): number => {
   console.log("yay!!!");
-  const n = 8;
 
-  n + 8;
+  const n = 9;
 
   const div = document.createElement("div");
   div.classList.add("icon");

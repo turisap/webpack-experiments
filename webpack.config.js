@@ -4,6 +4,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
@@ -21,6 +22,7 @@ const ROUTES = {
   appEntry: resolveModule("src/index.ts"),
   appBuilt: resolveModule("build"),
   appPublic: resolveModule("public"),
+  appTsConfig: resolveModule("tsconfig.json"),
 };
 
 const cssRegex = /\.css$/;
@@ -179,6 +181,14 @@ module.exports = function ({ mode }) {
           }
         )
       ),
+
+      new ForkTsCheckerWebpackPlugin({
+        eslint: true,
+        async: DEV_MODE,
+        tsconfig: ROUTES.appTsConfig,
+        // files to process and and example of a file to exclude
+        reportFiles: ["src/**/*.{ts,tsx}", "!src/skip.ts"],
+      }),
     ].filter(Boolean),
 
     module: {
@@ -219,6 +229,14 @@ module.exports = function ({ mode }) {
           ],
         },
       ],
+    },
+
+    devServer: {
+      // shows full-screen overlay with errors
+      overlay: {
+        warnings: PROD_MODE,
+        errors: true,
+      },
     },
   };
 };
