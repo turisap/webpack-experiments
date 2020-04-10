@@ -23,13 +23,13 @@ const ROUTES = {
   appBuilt: resolveModule("build"),
   appPublic: resolveModule("public"),
   appTsConfig: resolveModule("tsconfig.json"),
+  appTsReportFiles: ["src/**/*.{ts,tsx}", "!src/skip.ts"],
 };
 
 const cssRegex = /\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
-const tsRegex = /\.tsx?$/;
 
 module.exports = function ({ mode }) {
   const DEV_MODE = mode === "development";
@@ -187,7 +187,7 @@ module.exports = function ({ mode }) {
         async: DEV_MODE,
         tsconfig: ROUTES.appTsConfig,
         // files to process and and example of a file to exclude
-        reportFiles: ["src/**/*.{ts,tsx}", "!src/skip.ts"],
+        reportFiles: ROUTES.appTsReportFiles,
       }),
     ].filter(Boolean),
 
@@ -205,9 +205,20 @@ module.exports = function ({ mode }) {
           },
         },
         {
-          test: tsRegex,
-          use: "ts-loader",
+          test: scriptsRegex,
           exclude: /node_modules/,
+          use: [
+            {
+              loader: "babel-loader",
+              options: {},
+            },
+            {
+              loader: "ts-loader",
+              options: {
+                reportFiles: ROUTES.appTsReportFiles,
+              },
+            },
+          ],
         },
         {
           test: cssRegex,
@@ -234,9 +245,23 @@ module.exports = function ({ mode }) {
     devServer: {
       // shows full-screen overlay with errors
       overlay: {
-        warnings: PROD_MODE,
+        warnings: false,
         errors: true,
       },
+    },
+
+    resolve: {
+      extensions: [".ts", ".tsx", ".js"],
+      alias: {
+        components: path.resolve(__dirname, "src/components/"),
+        assets: path.resolve(__dirname, "assets"),
+      },
+    },
+
+    // gives performace hints during build
+    performance: {
+      hints: PROD_MODE ? "error" : "warning",
+      maxAssetSize: 500000,
     },
   };
 };
