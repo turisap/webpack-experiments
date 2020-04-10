@@ -11,10 +11,12 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
 // TODO  add webpack bundle analize preset
-// TODO images compressiong with webpack
 // TODO code splitting
 // TODO read about sass modules and setup loaders for them
 // TODO reporting on files exceeding particular size
+// TODO  add fonts loading
+// TODO add images loading with urls in html
+// TODO images compressiong with webpack
 const ROUTES = {
   appEntry: resolveModule("src/index.ts"),
   appBuilt: resolveModule("build"),
