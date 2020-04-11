@@ -9,6 +9,7 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
     "autoprefixer": "^9.7.5",
@@ -47,5 +48,8 @@
     "dev:debug": "webpack-dev-server --env.mode development  --hot",
     "prod": "webpack  --env.mode production"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
 }

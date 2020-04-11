@@ -19,7 +19,7 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO add images loading with urls in html
 // TODO images compressiong with webpack
 const ROUTES = {
-  appEntry: resolveModule("src/index.ts"),
+  appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),
   appPublic: resolveModule("public"),
   appTsConfig: resolveModule("tsconfig.json"),
@@ -210,7 +210,10 @@ module.exports = function ({ mode }) {
           use: [
             {
               loader: "babel-loader",
-              options: {},
+              options: {
+                presets: ["@babel/preset-env", "@babel/preset-react"],
+                plugins: ["@babel/plugin-proposal-object-rest-spread"],
+              },
             },
             {
               loader: "ts-loader",
@@ -261,7 +264,6 @@ module.exports = function ({ mode }) {
     // gives performace hints during build
     performance: {
       hints: PROD_MODE ? "error" : "warning",
-      maxAssetSize: 500000,
     },
   };
 };
