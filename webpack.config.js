@@ -296,13 +296,13 @@ module.exports = function ({ mode, preset }) {
     },
 
     // gives performace hints during build
-    // performance: {
-    //   hints: PROD_MODE ? "error" : "warning",
-    //   maxAssetSize: 50000,
-    //   // filter out all source maps files from assesment
-    //   assetFilter: function (assetFilename) {
-    //     return !/\.map$/.test(assetFilename);
-    //   },
-    // },
+    performance: {
+      hints: PROD_MODE ? "error" : "warning",
+      maxAssetSize: 550000,
+      // filter out all source maps files from assesment
+      assetFilter: function (assetFilename) {
+        return !/\.map$/.test(assetFilename);
+      },
+    },
   };
 };
