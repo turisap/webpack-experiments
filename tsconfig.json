@@ -8,7 +8,9 @@
 		"removeComments": true,
 		"allowSyntheticDefaultImports": false,
 		"jsx": "react",
-		"allowJs": true
+		"allowJs": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true
 	},
 
 		"include": ["src/**/*"],

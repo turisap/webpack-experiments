@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const DotENVPlugin = require("dotenv-webpack");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
@@ -18,6 +19,7 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO  add fonts loading
 // TODO add images loading with urls in html
 // TODO images compressiong with webpack
+// TODO add cache param after whole configuration (after devtool)
 const ROUTES = {
   appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),
@@ -98,10 +100,9 @@ module.exports = function ({ mode }) {
     //  exit building proccess on error
     bail: PROD_MODE,
 
-    // TODO add cache param after whole configuration
     devtool: PROD_MODE ? "source-map" : "cheap-module-source-map",
 
-    entry: ROUTES.appEntry,
+    entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
     output: {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
@@ -114,6 +115,7 @@ module.exports = function ({ mode }) {
       globalObject: "this",
     },
 
+    // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
       minimizer: [
@@ -161,6 +163,13 @@ module.exports = function ({ mode }) {
             // TODO add a favicon
             favicon: "",
             title: "My app",
+            templateContent: `
+	        <html>
+		      <body>
+		          <div id="app"></div>
+		      </body>
+    		</html>
+ 		 `,
           },
           PROD_MODE && {
             minify: {
@@ -182,6 +191,7 @@ module.exports = function ({ mode }) {
         )
       ),
 
+      // make typescipt builds faster
       new ForkTsCheckerWebpackPlugin({
         eslint: true,
         async: DEV_MODE,
@@ -189,6 +199,9 @@ module.exports = function ({ mode }) {
         // files to process and and example of a file to exclude
         reportFiles: ROUTES.appTsReportFiles,
       }),
+
+      // load vars from .env
+      new DotENVPlugin(),
     ].filter(Boolean),
 
     module: {
@@ -201,7 +214,7 @@ module.exports = function ({ mode }) {
           exclude: /node_modules/,
           loader: "eslint-loader",
           options: {
-            // formatter: require("eslint-friendly-formatter"),
+            formatter: require("eslint-friendly-formatter"),
           },
         },
         {
@@ -212,7 +225,10 @@ module.exports = function ({ mode }) {
               loader: "babel-loader",
               options: {
                 presets: ["@babel/preset-env", "@babel/preset-react"],
-                plugins: ["@babel/plugin-proposal-object-rest-spread"],
+                plugins: [
+                  "react-hot-loader/babel",
+                  "@babel/plugin-proposal-object-rest-spread",
+                ],
               },
             },
             {
@@ -251,6 +267,9 @@ module.exports = function ({ mode }) {
         warnings: false,
         errors: true,
       },
+
+      // enables HMR
+      hot: true,
     },
 
     resolve: {

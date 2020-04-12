@@ -70,3 +70,7 @@ build/
 # vim
 *.swo
 *.swp
+*.swm
+
+# environment
+.env
