@@ -6,6 +6,7 @@ const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const DotENVPlugin = require("dotenv-webpack");
+const ManifestPlugin = require("webpack-manifest-plugin");
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
@@ -202,6 +203,8 @@ module.exports = function ({ mode }) {
 
       // load vars from .env
       new DotENVPlugin(),
+
+      new ManifestPlugin(),
     ].filter(Boolean),
 
     module: {
