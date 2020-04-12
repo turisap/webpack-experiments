@@ -16,6 +16,7 @@
     "@typescript-eslint/parser": "^2.27.0",
     "autoprefixer": "^9.7.5",
     "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.4.2",
     "cssnano": "^4.1.10",
     "dotenv-webpack": "^1.7.0",
@@ -50,7 +51,8 @@
   "scripts": {
     "dev": "webpack-dashboard -- webpack-dev-server --env.mode development",
     "dev:debug": "webpack-dev-server --env.mode development  --hot",
-    "prod": "webpack  --env.mode production"
+    "prod": "webpack  --env.mode production",
+    "analize:prod":  "yarn prod --env.preset analize"
   },
   "dependencies": {
     "react": "^16.13.1",

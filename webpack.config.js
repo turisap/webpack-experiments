@@ -7,20 +7,21 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const DotENVPlugin = require("dotenv-webpack");
 const ManifestPlugin = require("webpack-manifest-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
+// TODO code splitting
 // TODO try several entry points
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
 // TODO  add webpack bundle analize preset
-// TODO code splitting
 // TODO read about sass modules and setup loaders for them
 // TODO reporting on files exceeding particular size
-// TODO  add fonts loading
-// TODO add images loading with urls in html
-// TODO images compressiong with webpack
 // TODO add cache param after whole configuration (after devtool)
+// TODO tree shaking from  webpack docs
 const ROUTES = {
   appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),
@@ -33,10 +34,12 @@ const cssRegex = /\.css$/;
 const sassRegex = /\.(scss|sass)$/;
 const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
+const fontRegex = /\.(woff|woff2|eot|ttf|otf)$/;
 
-module.exports = function ({ mode }) {
+module.exports = function ({ mode, preset }) {
   const DEV_MODE = mode === "development";
   const PROD_MODE = mode === "production";
+  const ANALIZE_MODE = preset === "analize";
 
   const getStyleLoaders = (preProcessor, sourceMap = true) => {
     const loaders = [
@@ -148,6 +151,11 @@ module.exports = function ({ mode }) {
     plugins: [
       new DashboardPlugin(),
 
+      // clean up dist directory on subsequent production builds
+      new CleanWebpackPlugin(),
+
+      ANALIZE_MODE && new BundleAnalyzerPlugin(),
+
       new MiniCssExtractPlugin({
         filename: PROD_MODE
           ? "css/[name].[contenthash:8].css"
@@ -161,8 +169,8 @@ module.exports = function ({ mode }) {
             // defer script loading
             scriptLoading: "defer",
 
-            // TODO add a favicon
-            favicon: "",
+            // to  add a favicon comment out the next line
+            // favicon: "",
             title: "My app",
             templateContent: `
 	        <html>
@@ -261,6 +269,10 @@ module.exports = function ({ mode }) {
             },
           ],
         },
+        {
+          test: fontRegex,
+          use: "file-loader",
+        },
       ],
     },
 
@@ -284,8 +296,13 @@ module.exports = function ({ mode }) {
     },
 
     // gives performace hints during build
-    performance: {
-      hints: PROD_MODE ? "error" : "warning",
-    },
+    // performance: {
+    //   hints: PROD_MODE ? "error" : "warning",
+    //   maxAssetSize: 50000,
+    //   // filter out all source maps files from assesment
+    //   assetFilter: function (assetFilename) {
+    //     return !/\.map$/.test(assetFilename);
+    //   },
+    // },
   };
 };
