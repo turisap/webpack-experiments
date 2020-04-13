@@ -6,7 +6,6 @@
   "repository": "git@github.com:turisap/webpack-experiments.git",
   "author": "turisap <kirillshakirov57@gmail.com>",
   "license": "MIT",
-  "sideEffects": false,
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
@@ -54,7 +53,8 @@
     "dev": "webpack-dashboard -- webpack-dev-server --env.mode development",
     "dev:debug": "webpack-dev-server --env.mode development  --hot",
     "prod": "NODE_ENV=production webpack  --env.mode production",
-    "analize:prod":  "yarn prod --env.preset analize"
+    "analize:prod":  "yarn prod --env.preset analize",
+    "analize:dev":  "yarn dev --env.preset analize"
   },
   "dependencies": {
     "react": "^16.13.1",

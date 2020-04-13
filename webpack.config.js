@@ -17,9 +17,7 @@ const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 // TODO try several entry points
 // TODO  and make it  with several  css files outputs as well
 // TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
-// TODO read about sass modules and setup loaders for them
 // TODO add cache param after whole configuration (after devtool)
-// TODO tree shaking from  webpack docs
 const ROUTES = {
   appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),
@@ -251,14 +249,10 @@ module.exports = function ({ mode, preset }) {
         {
           test: cssRegex,
           use: getStyleLoaders(),
-          // make css not tree-shakable as it is not  dead code
-          sideEffects: true,
         },
         {
           test: sassRegex,
           use: getStyleLoaders("sass-loader"),
-          // make css not tree-shakable as it is not  dead code
-          sideEffects: true,
         },
         {
           test: imagesRegex,
