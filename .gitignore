@@ -60,6 +60,17 @@ typings/
 # dotenv environment variables file
 .env
 
+# vim
+*.swp
+
 # webpack default dist folder
 dist/
+build/
 
+# vim
+*.swo
+*.swp
+*.swm
+
+# environment
+.env
