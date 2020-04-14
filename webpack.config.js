@@ -100,7 +100,7 @@ module.exports = function ({ mode, preset }) {
     //  exit building proccess on error
     bail: PROD_MODE,
 
-    devtool: PROD_MODE ? "source-map" : "cheap-module-source-map",
+    devtool: PROD_MODE ? "none" : "cheap-module-source-map",
 
     entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
@@ -109,7 +109,9 @@ module.exports = function ({ mode, preset }) {
 
       filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
 
-      // publicPath: ROUTES.appPublic,
+      chunkFilename: PROD_MODE
+        ? "js/[name].[contenthash:8].chunk.js"
+        : DEV_MODE && "js/[name].chunk.js",
 
       // for web workers
       globalObject: "this",
@@ -120,12 +122,11 @@ module.exports = function ({ mode, preset }) {
       minimize: PROD_MODE,
       minimizer: [
         new TerserPlugin({
+          //  set it to true to extract all comments into a separate file
+          extractComments: false,
           terserOptions: {
             parse: {
               ecma: 8,
-            },
-            output: {
-              comments: true,
             },
           },
 
@@ -142,6 +143,18 @@ module.exports = function ({ mode, preset }) {
           },
         }),
       ],
+
+      splitChunks: {
+        cacheGroups: {
+          // extract react and react dom into a separate chunk
+          // you can tweak it to extract other deps
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "vendor",
+            chunks: "all",
+          },
+        },
+      },
     },
 
     plugins: [
@@ -293,7 +306,7 @@ module.exports = function ({ mode, preset }) {
 
     // gives performace hints during build
     performance: {
-      hints: PROD_MODE ? "error" : "warning",
+      hints: PROD_MODE ? "warning" : "warning",
       maxAssetSize: 550000,
       // filter out all source maps files from assesment
       assetFilter: function (assetFilename) {

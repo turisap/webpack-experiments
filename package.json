@@ -11,6 +11,7 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "@types/react": "^16.9.34",
+    "@types/react-router-dom": "^5.1.4",
     "@types/styled-components": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
@@ -53,12 +54,14 @@
     "dev": "webpack-dashboard -- webpack-dev-server --env.mode development",
     "dev:debug": "webpack-dev-server --env.mode development  --hot",
     "prod": "NODE_ENV=production webpack  --env.mode production",
-    "analize:prod":  "yarn prod --env.preset analize",
-    "analize:dev":  "yarn dev --env.preset analize"
+    "analize:prod": "yarn prod --env.preset analize",
+    "analize:dev": "yarn dev --env.preset analize"
   },
   "dependencies": {
+    "ramda": "^0.27.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router-dom": "^5.1.2",
     "styled-components": "^5.1.0"
   }
 }
