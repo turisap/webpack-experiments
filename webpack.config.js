@@ -120,6 +120,7 @@ module.exports = function ({ mode, preset }) {
     // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
+      runtimeChunk: "single",
       minimizer: [
         new TerserPlugin({
           //  set it to true to extract all comments into a separate file
@@ -144,13 +145,23 @@ module.exports = function ({ mode, preset }) {
         }),
       ],
 
+      moduleIds: "hashed",
+
       splitChunks: {
+        chunks: "all",
+        maxInitialRequests: Infinity,
+        minSize: 20,
         cacheGroups: {
-          // extract react and react dom into a separate chunk
-          // you can tweak it to extract other deps
-          vendor: {
+          // first cache group contains react and react dom (it will be a separate chunk)
+          react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-            name: "vendor",
+            name: "react",
+            chunks: "all",
+          },
+          // this is the second chunk with node_modules for the rest of node_modules
+          commons: {
+            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
+            name: "commons",
             chunks: "all",
           },
         },
