@@ -95,8 +95,7 @@ module.exports = function ({ mode, preset }) {
     //  exit building proccess on error
     bail: PROD_MODE,
 
-    // devtool: PROD_MODE ? "none" : "cheap-module-source-map",
-    devtool: PROD_MODE ? "source-map" : "cheap-module-source-map",
+    devtool: PROD_MODE ? "none" : "cheap-module-source-map",
 
     entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
@@ -105,9 +104,9 @@ module.exports = function ({ mode, preset }) {
 
       filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
 
-      // chunkFilename: PROD_MODE
-      //   ? "js/[name].[contenthash:8].chunk.js"
-      //   : DEV_MODE && "js/[name].chunk.js",
+      chunkFilename: PROD_MODE
+        ? "js/[name].[contenthash:8].chunk.js"
+        : DEV_MODE && "js/[name].chunk.js",
 
       // for web workers
       globalObject: "this",
@@ -116,7 +115,7 @@ module.exports = function ({ mode, preset }) {
     // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
-      // runtimeChunk: "single",
+      runtimeChunk: "single",
       minimizer: [
         new TerserPlugin({
           //  set it to true to extract all comments into a separate file
@@ -141,27 +140,27 @@ module.exports = function ({ mode, preset }) {
         }),
       ],
 
-      // moduleIds: "hashed",
+      moduleIds: "hashed",
 
-      // splitChunks: {
-      //   chunks: "all",
-      //   maxInitialRequests: Infinity,
-      //   minSize: 20,
-      //   cacheGroups: {
-      //     // first cache group contains react and react dom (it will be a separate chunk)
-      //     react: {
-      //       test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-      //       name: "react",
-      //       chunks: "all",
-      //     },
-      //     // this is the second chunk with node_modules for the rest of node_modules
-      //     commons: {
-      //       test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
-      //       name: "commons",
-      //       chunks: "all",
-      //     },
-      //   },
-      // },
+      splitChunks: {
+        chunks: "all",
+        maxInitialRequests: Infinity,
+        minSize: 20,
+        cacheGroups: {
+          // first cache group contains react and react dom (it will be a separate chunk)
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
+            chunks: "all",
+          },
+          // this is the second chunk with node_modules for the rest of node_modules
+          commons: {
+            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
+            name: "commons",
+            chunks: "all",
+          },
+        },
+      },
     },
 
     plugins: [
@@ -313,7 +312,7 @@ module.exports = function ({ mode, preset }) {
 
     // gives performace hints during build
     performance: {
-      hints: PROD_MODE ? "warning" : "warning",
+      hints: "warning",
       maxAssetSize: 550000,
       // filter out all source maps files from assesment
       assetFilter: function (assetFilename) {
