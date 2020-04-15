@@ -34,6 +34,9 @@ const App = () => (
             <li>
               <Link to="/counter">counter page</Link>
             </li>
+            <li>
+              <Link to="/counter">ololoevsk</Link>
+            </li>
           </ul>
         </nav>
         <Suspense fallback={<div>Loading...</div>}>
