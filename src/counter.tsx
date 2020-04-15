@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+// import * as R from "ramda";
 
 const StyledCounter = styled.div`
   background: #eaf4c1;
@@ -9,6 +10,8 @@ const StyledCounter = styled.div`
 
 const Counter: React.FC = () => {
   const [counts, setCounts] = useState(0);
+
+  // const l = R.times(() => 9, 100);
 
   return (
     <StyledCounter>

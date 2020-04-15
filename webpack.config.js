@@ -13,11 +13,6 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
-// TODO code splitting
-// TODO try several entry points
-// TODO  and make it  with several  css files outputs as well
-// TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
-// TODO add cache param after whole configuration (after devtool)
 const ROUTES = {
   appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),

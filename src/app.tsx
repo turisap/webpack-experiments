@@ -1,9 +1,25 @@
 import React, { Suspense } from "react";
 import { hot } from "react-hot-loader/root";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+// import Loadable from "react-loadable";
+// import styled from "styled-components";
+import Home from "./home";
+import Counter from "./counter";
 
-const Home = React.lazy(() => import("./home"));
-const Counter = React.lazy(() => import("./counter"));
+// const Loading = styled.div`
+//   width: 900px;
+//   height: 300px;
+//   background: red;
+// `;
+
+// const Home = Loadable({
+//   loader: () => import("./home") /* webpackChunkName: "settings" */,
+//   loading: Loading,
+// });
+// const Counter = Loadable({
+//   loader: () => import("./counter") /* webpackChunkName: "counter" */,
+//   loading: Loading,
+// });
 
 const App = () => (
   <>
