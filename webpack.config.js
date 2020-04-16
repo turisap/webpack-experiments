@@ -13,11 +13,6 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
 
 const resolveModule = (relPath) => path.resolve(process.cwd(), relPath);
 
-// TODO code splitting
-// TODO try several entry points
-// TODO  and make it  with several  css files outputs as well
-// TODO  as well as chunks for routes like here https://itnext.io/react-router-and-webpack-v4-code-splitting-using-splitchunksplugin-f0a48f110312
-// TODO add cache param after whole configuration (after devtool)
 const ROUTES = {
   appEntry: resolveModule("src/index.tsx"),
   appBuilt: resolveModule("build"),
@@ -100,7 +95,7 @@ module.exports = function ({ mode, preset }) {
     //  exit building proccess on error
     bail: PROD_MODE,
 
-    devtool: PROD_MODE ? "source-map" : "cheap-module-source-map",
+    devtool: PROD_MODE ? "none" : "cheap-module-source-map",
 
     entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
@@ -109,7 +104,9 @@ module.exports = function ({ mode, preset }) {
 
       filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
 
-      // publicPath: ROUTES.appPublic,
+      chunkFilename: PROD_MODE
+        ? "js/[name].[contenthash:8].chunk.js"
+        : DEV_MODE && "js/[name].chunk.js",
 
       // for web workers
       globalObject: "this",
@@ -118,14 +115,14 @@ module.exports = function ({ mode, preset }) {
     // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
+      runtimeChunk: "single",
       minimizer: [
         new TerserPlugin({
+          //  set it to true to extract all comments into a separate file
+          extractComments: false,
           terserOptions: {
             parse: {
               ecma: 8,
-            },
-            output: {
-              comments: true,
             },
           },
 
@@ -142,6 +139,28 @@ module.exports = function ({ mode, preset }) {
           },
         }),
       ],
+
+      moduleIds: "hashed",
+
+      splitChunks: {
+        chunks: "all",
+        maxInitialRequests: Infinity,
+        minSize: 20,
+        cacheGroups: {
+          // first cache group contains react and react dom (it will be a separate chunk)
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
+            chunks: "all",
+          },
+          // this is the second chunk with node_modules for the rest of node_modules
+          commons: {
+            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
+            name: "commons",
+            chunks: "all",
+          },
+        },
+      },
     },
 
     plugins: [
@@ -293,7 +312,7 @@ module.exports = function ({ mode, preset }) {
 
     // gives performace hints during build
     performance: {
-      hints: PROD_MODE ? "error" : "warning",
+      hints: "warning",
       maxAssetSize: 550000,
       // filter out all source maps files from assesment
       assetFilter: function (assetFilename) {
