@@ -119,7 +119,7 @@ module.exports = function ({ mode, preset }) {
       minimizer: [
         new TerserPlugin({
           //  set it to true to extract all comments into a separate file
-          // extractComments: false,
+          extractComments: false,
           terserOptions: {
             parse: {
               ecma: 8,
