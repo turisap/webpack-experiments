@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-// import * as R from "ramda";
+import * as R from "ramda";
 
 const StyledCounter = styled.div`
   background: #eaf4c1;
@@ -11,7 +11,7 @@ const StyledCounter = styled.div`
 const Counter: React.FC = () => {
   const [counts, setCounts] = useState(0);
 
-  // const l = R.times(() => 9, 100);
+  const l = R.times(() => 9, 100);
 
   return (
     <StyledCounter>
@@ -20,6 +20,7 @@ const Counter: React.FC = () => {
       <p>Counter is {counts}</p>
       <div className="icon"></div>
       <button onClick={() => setCounts(counts + 1)}>Click me!</button>
+      {l}
     </StyledCounter>
   );
 };

@@ -30,7 +30,6 @@ const fontRegex = /\.(woff|woff2|eot|ttf|otf)$/;
 const stats = {
   moduleAssets: false,
   children: false,
-  chunkOrigins: false,
   colors: true,
   entrypoints: false,
   modules: false,
@@ -101,7 +100,6 @@ module.exports = function ({ mode, preset }) {
 
     return loaders;
   };
-  console.log("MODE", mode);
 
   return {
     mode,
@@ -111,7 +109,8 @@ module.exports = function ({ mode, preset }) {
 
     devtool: PROD_MODE ? "none" : "cheap-module-source-map",
 
-    entry: ["react-hot-loader/patch", ROUTES.appEntry],
+    entry: [ROUTES.appEntry],
+    // entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
     output: {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
@@ -154,7 +153,7 @@ module.exports = function ({ mode, preset }) {
 
       splitChunks: {
         chunks: "all",
-        name: false,
+        minSize: 0,
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
@@ -259,9 +258,6 @@ module.exports = function ({ mode, preset }) {
           enforce: "pre",
           exclude: /node_modules/,
           loader: "eslint-loader",
-          options: {
-            formatter: require("eslint-friendly-formatter"),
-          },
         },
         {
           test: scriptsRegex,

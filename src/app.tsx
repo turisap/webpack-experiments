@@ -1,5 +1,5 @@
-import React from "react";
-import { hot } from "react-hot-loader/root";
+import React, { useEffect } from "react";
+// import { hot } from "react-hot-loader/root";
 import Loadable from "react-loadable";
 import styled from "styled-components";
 
@@ -10,20 +10,27 @@ const Loading = styled.div`
 `;
 
 const Home = Loadable({
-  loader: () => import("./home") /* webpackChunkName: "settings" */,
+  loader: () => import(/* webpackChunkName: "settings" */ "./Home"),
   loading: Loading,
 });
 const Counter = Loadable({
-  loader: () => import("./counter") /* webpackChunkName: "counter" */,
+  loader: () => import(/* webpackChunkName: "counter" */ "./Counter"),
   loading: Loading,
 });
 
-const App = () => (
-  <>
-    <h1>App with a counter</h1>
-    <Counter />
-    <Home />
-  </>
-);
+const App = () => {
+  useEffect(() => {
+    import("./Ololo").then(console.log);
+  });
 
-export default hot(App);
+  return (
+    <>
+      <h1>App with a counter</h1>
+      <Counter />
+      <Home />
+    </>
+  );
+};
+
+// export default hot(App);
+export default App;
