@@ -58,6 +58,7 @@
     "analize:dev": "yarn dev --env.preset analize"
   },
   "dependencies": {
+    "@types/react-loadable": "^5.5.3",
     "ramda": "^0.27.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

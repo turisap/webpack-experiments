@@ -154,6 +154,7 @@ module.exports = function ({ mode, preset }) {
       splitChunks: {
         chunks: "all",
         minSize: 0,
+        name: true,
       },
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985

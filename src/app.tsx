@@ -1,33 +1,33 @@
-import React, { useEffect } from "react";
+import React from "react";
 // import { hot } from "react-hot-loader/root";
-import Loadable from "react-loadable";
-import styled from "styled-components";
+import * as Loadable from "react-loadable/lib/index";
+// import styled from "styled-components";
 
-const Loading = styled.div`
-  width: 900px;
-  height: 300px;
-  background: red;
-`;
+// const Loading = styled.div`
+//   width: 900px;
+//   height: 300px;
+//   background: red;
+// `;
 
 const Home = Loadable({
   loader: () => import(/* webpackChunkName: "settings" */ "./Home"),
-  loading: Loading,
 });
+
 const Counter = Loadable({
-  loader: () => import(/* webpackChunkName: "counter" */ "./Counter"),
-  loading: Loading,
+  loader: () => import(/* webpackChunkName: "settings" */ "./Counter"),
+});
+
+const Me = Loadable({
+  loader: () => import(/* webpackChunkName: "settings" */ "./Ololo"),
 });
 
 const App = () => {
-  useEffect(() => {
-    import("./Ololo").then(console.log);
-  });
-
   return (
     <>
       <h1>App with a counter</h1>
-      <Counter />
       <Home />
+      <Counter />
+      <Me />
     </>
   );
 };
