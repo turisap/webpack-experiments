@@ -27,6 +27,19 @@ const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
 const fontRegex = /\.(woff|woff2|eot|ttf|otf)$/;
 
+const stats = {
+  moduleAssets: false,
+  children: false,
+  chunkOrigins: false,
+  colors: true,
+  entrypoints: false,
+  modules: false,
+  moduleTrace: false,
+  outputPath: false,
+  reasons: false,
+  source: true,
+};
+
 module.exports = function ({ mode, preset }) {
   const DEV_MODE = mode === "development";
   const PROD_MODE = mode === "production";
@@ -88,6 +101,7 @@ module.exports = function ({ mode, preset }) {
 
     return loaders;
   };
+  console.log("MODE", mode);
 
   return {
     mode,
@@ -115,7 +129,6 @@ module.exports = function ({ mode, preset }) {
     // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
-      runtimeChunk: "single",
       minimizer: [
         new TerserPlugin({
           //  set it to true to extract all comments into a separate file
@@ -131,7 +144,6 @@ module.exports = function ({ mode, preset }) {
           sourceMap: true,
         }),
 
-        // TODO find out why this plugin removes source maps for prod
         new OptimizeCssAssetsPlugin({
           cssProcessor: require("cssnano"),
           cssProcessorPluginOptions: {
@@ -140,27 +152,35 @@ module.exports = function ({ mode, preset }) {
         }),
       ],
 
-      moduleIds: "hashed",
-
       splitChunks: {
         chunks: "all",
-        maxInitialRequests: Infinity,
-        minSize: 20,
-        cacheGroups: {
-          // first cache group contains react and react dom (it will be a separate chunk)
-          react: {
-            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-            name: "react",
-            chunks: "all",
-          },
-          // this is the second chunk with node_modules for the rest of node_modules
-          commons: {
-            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
-            name: "commons",
-            chunks: "all",
-          },
-        },
+        name: false,
       },
+      // Keep the runtime chunk separated to enable long term caching
+      // https://twitter.com/wSokra/status/969679223278505985
+      // https://github.com/facebook/create-react-app/issues/5358
+      runtimeChunk: {
+        name: (entrypoint) => `runtime-${entrypoint.name}`,
+      },
+      // splitChunks: {
+      //   chunks: "all",
+      //   maxInitialRequests: Infinity,
+      //   minSize: 20,
+      //   cacheGroups: {
+      //     // first cache group contains react and react dom (it will be a separate chunk)
+      //     react: {
+      //       test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+      //       name: "react",
+      //       chunks: "all",
+      //     },
+      //     // this is the second chunk with node_modules for the rest of node_modules
+      //     commons: {
+      //       test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
+      //       name: "commons",
+      //       chunks: "all",
+      //     },
+      //   },
+      // },
     },
 
     plugins: [
@@ -249,12 +269,16 @@ module.exports = function ({ mode, preset }) {
           use: [
             {
               loader: "babel-loader",
+
+              // options: {
+              //   presets: ["@babel/preset-env", "@babel/preset-react"],
+              //   plugins: [
+              //     "react-hot-loader/babel",
+              //     "@babel/plugin-proposal-object-rest-spread",
+              //   ],
+              // },
               options: {
-                presets: ["@babel/preset-env", "@babel/preset-react"],
-                plugins: [
-                  "react-hot-loader/babel",
-                  "@babel/plugin-proposal-object-rest-spread",
-                ],
+                presets: ["@babel/preset-react"],
               },
             },
             {
@@ -291,8 +315,13 @@ module.exports = function ({ mode, preset }) {
       ],
     },
 
+    // stats for prod builds
+    stats,
+
     devServer: {
-      // shows full-screen overlay with errors
+      // stats for devserver
+      stats,
+
       overlay: {
         warnings: false,
         errors: true,
