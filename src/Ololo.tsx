@@ -8,9 +8,11 @@ const StyledMe = styled.div`
 `;
 
 const Ololo = () => {
-  <StyledMe>
-    <h1>ME!</h1>
-  </StyledMe>;
+  return (
+    <StyledMe>
+      <h1>ME!</h1>
+    </StyledMe>
+  );
 };
 
 export default Ololo;

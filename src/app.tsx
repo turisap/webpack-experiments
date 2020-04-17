@@ -1,6 +1,6 @@
 import React from "react";
 // import { hot } from "react-hot-loader/root";
-import * as Loadable from "react-loadable/lib/index";
+import loadable from "@loadable/component";
 // import styled from "styled-components";
 
 // const Loading = styled.div`
@@ -9,17 +9,17 @@ import * as Loadable from "react-loadable/lib/index";
 //   background: red;
 // `;
 
-const Home = Loadable({
-  loader: () => import(/* webpackChunkName: "settings" */ "./Home"),
-});
+export const Home = loadable(
+  /* webpackChunkName: "homey" */ () => import("./Home")
+);
 
-const Counter = Loadable({
-  loader: () => import(/* webpackChunkName: "settings" */ "./Counter"),
-});
+export const Counter = loadable(
+  /* webpackChunkName: "counter" */ () => import("./Counter")
+);
 
-const Me = Loadable({
-  loader: () => import(/* webpackChunkName: "settings" */ "./Ololo"),
-});
+export const Person = loadable(
+  /* webpackChunkName: "ololosh" */ () => import("./Ololo")
+);
 
 const App = () => {
   return (
@@ -27,7 +27,7 @@ const App = () => {
       <h1>App with a counter</h1>
       <Home />
       <Counter />
-      <Me />
+      <Person />
     </>
   );
 };
