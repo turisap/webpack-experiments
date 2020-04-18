@@ -152,34 +152,24 @@ module.exports = function ({ mode, preset }) {
       ],
 
       splitChunks: {
-        chunks: "all",
-        minSize: 0,
+        // chunks: "all",
+        // maxInitialRequests: Infinity,
+        minSize: 20,
+        cacheGroups: {
+          // first cache group contains react and react dom (it will be a separate chunk)
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
+            chunks: "all",
+          },
+          // this is the second chunk with node_modules for the rest of node_modules
+          commons: {
+            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
+            name: "commons",
+            chunks: "all",
+          },
+        },
       },
-      // Keep the runtime chunk separated to enable long term caching
-      // https://twitter.com/wSokra/status/969679223278505985
-      // https://github.com/facebook/create-react-app/issues/5358
-      // runtimeChunk: {
-      //   name: (entrypoint) => `runtime-${entrypoint.name}`,
-      // },
-      // splitChunks: {
-      //   chunks: "all",
-      //   maxInitialRequests: Infinity,
-      //   minSize: 20,
-      //   cacheGroups: {
-      //     // first cache group contains react and react dom (it will be a separate chunk)
-      //     react: {
-      //       test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-      //       name: "react",
-      //       chunks: "all",
-      //     },
-      //     // this is the second chunk with node_modules for the rest of node_modules
-      //     commons: {
-      //       test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
-      //       name: "commons",
-      //       chunks: "all",
-      //     },
-      //   },
-      // },
     },
 
     plugins: [
@@ -275,6 +265,7 @@ module.exports = function ({ mode, preset }) {
               // },
               options: {
                 presets: ["@babel/preset-react"],
+                plugins: ["@loadable/babel-plugin"],
               },
             },
             {

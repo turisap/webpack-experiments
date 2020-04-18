@@ -17,6 +17,7 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
+    "@loadable/babel-plugin": "^5.12.0",
     "@types/react": "^16.9.34",
     "@types/react-router-dom": "^5.1.4",
     "@types/styled-components": "^5.0.1",
@@ -59,6 +60,9 @@
   },
   "dependencies": {
     "@loadable/component": "^5.12.0",
+    "@types/loadable__component": "^5.10.0",
+    "@types/ramda": "^0.27.3",
+    "@types/react-dom": "^16.9.6",
     "ramda": "^0.27.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
