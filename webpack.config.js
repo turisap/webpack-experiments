@@ -27,6 +27,7 @@ const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
 const fontRegex = /\.(woff|woff2|eot|ttf|otf)$/;
 
+// loggin information 
 const stats = {
   moduleAssets: false,
   children: false,
@@ -109,8 +110,7 @@ module.exports = function ({ mode, preset }) {
 
     devtool: PROD_MODE ? "none" : "cheap-module-source-map",
 
-    entry: [ROUTES.appEntry],
-    // entry: ["react-hot-loader/patch", ROUTES.appEntry],
+    entry: ["react-hot-loader/patch", ROUTES.appEntry],
 
     output: {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
@@ -121,11 +121,10 @@ module.exports = function ({ mode, preset }) {
         ? "js/[name].[contenthash:8].chunk.js"
         : DEV_MODE && "js/[name].chunk.js",
 
-      // for web workers
+      //substitution of 'this' for web workers
       globalObject: "this",
     },
 
-    // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
       minimizer: [
@@ -152,20 +151,12 @@ module.exports = function ({ mode, preset }) {
       ],
 
       splitChunks: {
-        // chunks: "all",
-        // maxInitialRequests: Infinity,
         minSize: 20,
         cacheGroups: {
           // first cache group contains react and react dom (it will be a separate chunk)
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
             name: "react",
-            chunks: "all",
-          },
-          // this is the second chunk with node_modules for the rest of node_modules
-          commons: {
-            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
-            name: "commons",
             chunks: "all",
           },
         },
@@ -206,7 +197,6 @@ module.exports = function ({ mode, preset }) {
           },
           PROD_MODE && {
             minify: {
-              // TODO check if it removes comments from html
               removeComments: true,
               collapseWhitespace: true,
               removeRedundantAttributes: true,
@@ -256,16 +246,13 @@ module.exports = function ({ mode, preset }) {
             {
               loader: "babel-loader",
 
-              // options: {
-              //   presets: ["@babel/preset-env", "@babel/preset-react"],
-              //   plugins: [
-              //     "react-hot-loader/babel",
-              //     "@babel/plugin-proposal-object-rest-spread",
-              //   ],
-              // },
               options: {
-                presets: ["@babel/preset-react"],
-                plugins: ["@loadable/babel-plugin"],
+                presets: ["@babel/preset-env", "@babel/preset-react"],
+                plugins: [
+                  "@loadable/babel-plugin",
+                  "react-hot-loader/babel",
+                  "@babel/plugin-proposal-object-rest-spread",
+                ],
               },
             },
             {

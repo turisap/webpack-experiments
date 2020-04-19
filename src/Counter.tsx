@@ -12,6 +12,7 @@ const Counter: React.FC = () => {
   const [counts, setCounts] = useState(0);
 
   const l = R.times(() => 9, 100);
+  console.log(l);
 
   return (
     <StyledCounter>
@@ -20,7 +21,6 @@ const Counter: React.FC = () => {
       <p>Counter is {counts}</p>
       <div className="icon"></div>
       <button onClick={() => setCounts(counts + 1)}>Click me!</button>
-      {l}
     </StyledCounter>
   );
 };
