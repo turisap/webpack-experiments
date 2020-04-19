@@ -27,6 +27,19 @@ const imagesRegex = /\.(png|jpe?g|gif|svg)$/;
 const scriptsRegex = /\.(js|ts|tsx)$/;
 const fontRegex = /\.(woff|woff2|eot|ttf|otf)$/;
 
+// logging information
+const stats = {
+  moduleAssets: false,
+  children: false,
+  colors: true,
+  entrypoints: false,
+  modules: false,
+  moduleTrace: false,
+  outputPath: false,
+  reasons: false,
+  source: true,
+};
+
 module.exports = function ({ mode, preset }) {
   const DEV_MODE = mode === "development";
   const PROD_MODE = mode === "production";
@@ -102,20 +115,18 @@ module.exports = function ({ mode, preset }) {
     output: {
       path: PROD_MODE ? ROUTES.appBuilt : undefined,
 
-      filename: PROD_MODE ? "js/[name].[contenthash].js" : "js/bundle.js",
+      filename: PROD_MODE ? "js/[name].[contenthash:8].js" : "js/bundle.js",
 
       chunkFilename: PROD_MODE
         ? "js/[name].[contenthash:8].chunk.js"
         : DEV_MODE && "js/[name].chunk.js",
 
-      // for web workers
+      //substitution of 'this' for web workers
       globalObject: "this",
     },
 
-    // FIXME add slitChunks webpack option for chunks loading
     optimization: {
       minimize: PROD_MODE,
-      runtimeChunk: "single",
       minimizer: [
         new TerserPlugin({
           //  set it to true to extract all comments into a separate file
@@ -131,7 +142,6 @@ module.exports = function ({ mode, preset }) {
           sourceMap: true,
         }),
 
-        // TODO find out why this plugin removes source maps for prod
         new OptimizeCssAssetsPlugin({
           cssProcessor: require("cssnano"),
           cssProcessorPluginOptions: {
@@ -140,23 +150,13 @@ module.exports = function ({ mode, preset }) {
         }),
       ],
 
-      moduleIds: "hashed",
-
       splitChunks: {
-        chunks: "all",
-        maxInitialRequests: Infinity,
         minSize: 20,
         cacheGroups: {
           // first cache group contains react and react dom (it will be a separate chunk)
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
             name: "react",
-            chunks: "all",
-          },
-          // this is the second chunk with node_modules for the rest of node_modules
-          commons: {
-            test: /[\\/]node_modules[\\/]!(react|react-dom)[\\/]/,
-            name: "commons",
             chunks: "all",
           },
         },
@@ -197,7 +197,6 @@ module.exports = function ({ mode, preset }) {
           },
           PROD_MODE && {
             minify: {
-              // TODO check if it removes comments from html
               removeComments: true,
               collapseWhitespace: true,
               removeRedundantAttributes: true,
@@ -239,9 +238,6 @@ module.exports = function ({ mode, preset }) {
           enforce: "pre",
           exclude: /node_modules/,
           loader: "eslint-loader",
-          options: {
-            formatter: require("eslint-friendly-formatter"),
-          },
         },
         {
           test: scriptsRegex,
@@ -249,9 +245,11 @@ module.exports = function ({ mode, preset }) {
           use: [
             {
               loader: "babel-loader",
+
               options: {
                 presets: ["@babel/preset-env", "@babel/preset-react"],
                 plugins: [
+                  "@loadable/babel-plugin",
                   "react-hot-loader/babel",
                   "@babel/plugin-proposal-object-rest-spread",
                 ],
@@ -291,8 +289,13 @@ module.exports = function ({ mode, preset }) {
       ],
     },
 
+    // stats for prod builds
+    stats,
+
     devServer: {
-      // shows full-screen overlay with errors
+      // stats for devserver
+      stats,
+
       overlay: {
         warnings: false,
         errors: true,

@@ -1,21 +1,20 @@
 footer {
   display: flex;
   flex: 1;
-
-
 }
 
 .sample {
-    display: grid;
-    transition: all .5s;
-    user-select: none;
-    background: linear-gradient(to bottom, white, black);
+  display: grid;
+  transition: all 0.5s;
+  user-select: none;
+  background: linear-gradient(to bottom, white, black);
 }
 
 footer {
- display: flex;
- flex:1;
+  display: flex;
+  flex: 1;
 }
 
-
-.foo { flex: 1 0 calc(1vw - 1px); }
+.foo {
+  flex: 1 0 calc(1vw - 1px);
+}
